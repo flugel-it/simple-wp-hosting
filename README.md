@@ -21,7 +21,7 @@ Add the following line to `/etc/hosts`
 `192.168.121.223 example.com`
 
 ### Windows:
-Add the following line to `C:\Windows\drivers\etc\hosts`:
+Add the following line to `C:\Windows\System32\drivers\etc\hosts`:
 
 `192.168.121.223 example.com`
 
