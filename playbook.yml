@@ -1,0 +1,54 @@
+---
+- name: Install LEMP for wordpress
+  hosts: all
+  roles:
+  - geerlingguy.nginx
+  - geerlingguy.php
+  - geerlingguy.mysql
+  vars:
+    mysql_enabled_on_startup: yes
+    mysql_databases:
+      - name: wordpress
+    mysql_users:
+      - name: wordpress
+        password: wordpress
+        priv: "wordpress.*:ALL"
+    nginx_vhosts:
+      - listen: "80"
+        server_name: "example.com"
+        server_name_redirect: "www.example.com"
+        root: "/var/www/example.com"
+        index: "index.php"
+        state: "present"
+        template: "{{ nginx_vhost_template }}"
+        filename: "example.com.conf"
+        extra_parameters: |
+          location ~ \.php$ {
+              fastcgi_split_path_info ^(.+\.php)(/.+)$;
+              fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+              fastcgi_index index.php;
+              fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+              include fastcgi_params;
+          }
+    php_enable_php_fpm: true
+    php_fpm_listen: /run/php/php7.0-fpm.sock
+
+- name: Deploy php application (phpinfo)
+  hosts: all
+  tasks:
+  - name: create webroot
+    file:
+      path: /var/www/example.com
+      state: directory
+      mode: 0770
+      owner: www-data
+      group: vagrant
+  - name: place phpinfo
+    lineinfile:
+      path: /var/www/example.com/index.php
+      line: '<?php phpinfo();'
+      create: yes
+      owner: www-data
+      group: vagrant
+      mode: 0770
+
