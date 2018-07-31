@@ -3,6 +3,9 @@
 ## Overview
 Automatic deployment of LEMP stack with (mostly) default configuration.
 
+## Compatibility
+Debian stretch
+
 ## Common usage:
 Run
 ```
